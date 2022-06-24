@@ -108,6 +108,7 @@ public class Gui extends JFrame implements ItemListener{
             if(!runBruteforceBool){
                 runBruteforceBool = true;
                 runBtn.setBackground(Color.GREEN);
+                setDisabled(true);
                 runBruteforce();
             }
         });
@@ -115,6 +116,7 @@ public class Gui extends JFrame implements ItemListener{
         stopBtn.addActionListener(v->{
             if(runBruteforceBool){
                 runBruteforceBool = false;
+                setDisabled(false);
                 runBtn.setBackground(Color.white);
             }
         });
@@ -205,6 +207,7 @@ public class Gui extends JFrame implements ItemListener{
 
         thread.stop();
 
+        setDisabled(false);
         runBtn.setBackground(Color.white);
         guessTextArea.setText(guessTextArea.getText() + "\ntook time: " + (System.currentTimeMillis() - start) + "ms" + " | password: " + bruteforce.guess);
     }
@@ -250,6 +253,15 @@ public class Gui extends JFrame implements ItemListener{
 
         updateFirstLetterCombination();
     }
+
+    /* disabled textfield if bruteforce run */
+    void setDisabled(Boolean enabled){
+        lowerAplhabetCheckbox.setEnabled(!enabled);
+        upperAplhabetCheckbox.setEnabled(!enabled);
+        digitCheckbox.setEnabled(!enabled);
+        passwordTextfield.setEnabled(!enabled);
+    }
+
 
     private void updateFirstLetterCombination() {
         String combination = combinationTextfield.getText();
