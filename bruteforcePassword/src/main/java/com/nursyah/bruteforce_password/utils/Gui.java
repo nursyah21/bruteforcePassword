@@ -141,7 +141,7 @@ public class Gui extends JFrame implements ItemListener{
 
         /* firstletter Combination */
         JPanel panel4 = new JPanel(new MigLayout());
-        panel4.add(new JLabel("First leter Combination:"));
+        panel4.add(new JLabel("First letter Combination:"));
         panel4.add(firsLetterCombination);
 
         /* password */
