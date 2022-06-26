@@ -30,7 +30,7 @@ public class Gui extends JFrame implements ItemListener{
 
 
     String[] combination = {"abcdefghijklmnpqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ","0123456789"};
-    ArrayList<String> combs = new ArrayList<>();
+    ArrayList<String> combs;
 
     int combinationRes = 0;
     boolean runBruteforceBool = false;
@@ -184,7 +184,10 @@ public class Gui extends JFrame implements ItemListener{
     // this is main function
     void testTime() throws InterruptedException {
         long start = System.currentTimeMillis();
+
         String password = passwordTextfield.getText();
+
+
         Bruteforce bruteforce = new Bruteforce(password, combinationTextfield.getText(), combs);
         Thread thread = new Thread(()-> {
             try {
@@ -268,6 +271,8 @@ public class Gui extends JFrame implements ItemListener{
 
         int core=Runtime.getRuntime().availableProcessors();
         StringBuilder temp = new StringBuilder();
+
+        combs = new ArrayList<>();
 
         int i=0;
         int n = core;

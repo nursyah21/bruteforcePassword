@@ -1,6 +1,5 @@
 package com.nursyah.bruteforce_password.utils;
 
-
 import java.util.ArrayList;
 
 public class Bruteforce {
@@ -23,6 +22,7 @@ public class Bruteforce {
 
     public void bruteforce() throws RuntimeException, InterruptedException {
         Thread []t = new Thread[core];
+
         for(int i=0; i< core; i++){
             int finalI = i;
             t[i] = new Thread(()->bruteforceCombination(combs.get(finalI), finalI));
