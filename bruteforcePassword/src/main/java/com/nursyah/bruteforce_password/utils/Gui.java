@@ -4,11 +4,10 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class Gui extends JFrame implements ItemListener{
 
@@ -19,7 +18,8 @@ public class Gui extends JFrame implements ItemListener{
     JCheckBox upperAplhabetCheckbox = new JCheckBox("upper Alphabet");
     JCheckBox digitCheckbox = new JCheckBox("digit");
 
-    JTextField combinationTextfield = new JTextField(1000);
+    JTextField otherCombinationTextfield = new JTextField(100);
+    JTextField combinationTextfield = new JTextField(100);
     JTextField passwordTextfield = new JTextField(10);
 
     JButton runBtn = new JButton("run");
@@ -29,10 +29,9 @@ public class Gui extends JFrame implements ItemListener{
     JTextArea guessTextArea = new JTextArea(4, 100);
 
 
-    String[] combination = {"abcdefghijklmnpqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ","0123456789"};
     ArrayList<String> combs;
 
-    int combinationRes = 0;
+    int core=Runtime.getRuntime().availableProcessors();
     boolean runBruteforceBool = false;
 
 
@@ -97,9 +96,23 @@ public class Gui extends JFrame implements ItemListener{
 
         add(buildDashboard());
 
+
         lowerAplhabetCheckbox.addItemListener(this);
         upperAplhabetCheckbox.addItemListener(this);
         digitCheckbox.addItemListener(this);
+        otherCombinationTextfield.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                updateCombination();
+            }
+        });
 
         lowerAplhabetCheckbox.setSelected(true);
 
@@ -135,6 +148,8 @@ public class Gui extends JFrame implements ItemListener{
         panel2.add(lowerAplhabetCheckbox);
         panel2.add(upperAplhabetCheckbox);
         panel2.add(digitCheckbox);
+        panel2.add(new JLabel("other:"));
+        panel2.add(otherCombinationTextfield);
 
         /* Combination */
         JPanel panel3 = new JPanel(new MigLayout());
@@ -215,46 +230,11 @@ public class Gui extends JFrame implements ItemListener{
         guessTextArea.setText(guessTextArea.getText() + "\ntook time: " + (System.currentTimeMillis() - start) + "ms" + " | password: " + bruteforce.guess);
     }
 
-    /* Checkbox action */
+
+    /* Checkbox action && generatedCombination */
     @Override
     public void itemStateChanged(ItemEvent e) {
-        if(e.getSource() == lowerAplhabetCheckbox){
-            if(e.getStateChange() == ItemEvent.SELECTED)combinationRes += 1;
-            else combinationRes -= 1;
-        }
-
-        if(e.getSource() == upperAplhabetCheckbox){
-            if(e.getStateChange() == ItemEvent.SELECTED) combinationRes += 2;
-            else combinationRes -= 2;
-        }
-
-        if(e.getSource() == digitCheckbox){
-            if(e.getStateChange() == ItemEvent.SELECTED) combinationRes += 4;
-            else combinationRes -= 4;
-        }
-
-
-
-        switch (combinationRes){
-            case 0:
-                combinationTextfield.setText("");break;
-            case 1:
-                combinationTextfield.setText(combination[0]);break;
-            case 2:
-                combinationTextfield.setText(combination[1]);break;
-            case 3:
-                combinationTextfield.setText(combination[0]+combination[1]);break;
-            case 4:
-                combinationTextfield.setText(combination[2]);break;
-            case 5:
-                combinationTextfield.setText(combination[0]+combination[2]);break;
-            case 6:
-                combinationTextfield.setText(combination[1]+combination[2]);break;
-            case 7:
-                combinationTextfield.setText(combination[0]+combination[1]+combination[2]);
-        }
-
-        updateFirstLetterCombination();
+        updateCombination();
     }
 
     /* disabled textfield if bruteforce run */
@@ -266,10 +246,36 @@ public class Gui extends JFrame implements ItemListener{
     }
 
 
-    private void updateFirstLetterCombination() {
+    void updateCombination() {
+        /*updateCombination*/
+
+        Set<Character> combinationSet = new LinkedHashSet<>();
+
+        if(lowerAplhabetCheckbox.isSelected()){
+            for(Character i : "abcdefghijklmnopqrstuvwxyz".toCharArray()) combinationSet.add(i);
+        }
+        if(upperAplhabetCheckbox.isSelected()){
+            for(Character i : "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()) combinationSet.add(i);
+        }
+        if(digitCheckbox.isSelected()){
+            for(Character i : "0123456789".toCharArray()) combinationSet.add(i);
+        }
+
+        String otherCombination = otherCombinationTextfield.getText();
+
+        for(Character i : otherCombination.toCharArray()) combinationSet.add(i);
+
+
+        StringBuilder combinationStr = new StringBuilder();
+        for(Character i : combinationSet) combinationStr.append(i);
+
+        combinationTextfield.setText(combinationStr.toString());
+
+
+
+        /* updatefirstLetterCombination */
         String combination = combinationTextfield.getText();
 
-        int core=Runtime.getRuntime().availableProcessors();
         StringBuilder temp = new StringBuilder();
 
         combs = new ArrayList<>();
