@@ -4,23 +4,27 @@ import java.util.ArrayList;
 
 public class Bruteforce {
     final String pass;
-    final int core = Runtime.getRuntime().availableProcessors();
+    final int core;
     final char[] combination;
     final ArrayList<String> combs;
 
     public boolean found = false;
-    String[] allguess = new String[core];
+    String[] allguess;
     public String guessProgress = "";
     public String guess = "";
 
 
-    public Bruteforce(String pass, String combination, ArrayList<String> combs){
+    public Bruteforce(String pass, String combination, ArrayList<String> combs, int core){
         this.pass = pass;
         this.combination = combination.toCharArray();
         this.combs = combs;
+        this.core = core;
     }
 
     public void bruteforce() throws RuntimeException, InterruptedException {
+        allguess = new String[core];
+        for(int i=0; i < core; i++)allguess[i] = "";
+
         Thread []t = new Thread[core];
 
         for(int i=0; i< core; i++){
@@ -34,7 +38,6 @@ public class Bruteforce {
             for(int i=0; i < core; i++) temp.append("guess").append(i + 1).append(": ").append(allguess[i]).append(" |  ");
             guessProgress = temp.toString();
 
-            Thread.sleep(50);
         }
 
         for(Thread ti: t){

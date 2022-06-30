@@ -25,6 +25,10 @@ public class Gui extends JFrame implements ItemListener{
     JButton runBtn = new JButton("run");
     JButton stopBtn = new JButton("stop");
 
+    ButtonGroup bruteforceOptions = new ButtonGroup();
+    JRadioButton singlethread = new JRadioButton("singlethread");
+    JRadioButton multithread = new JRadioButton("multithread");
+
     JTextField firsLetterCombination = new JTextField(100);
     JTextArea guessTextArea = new JTextArea(4, 100);
 
@@ -55,11 +59,14 @@ public class Gui extends JFrame implements ItemListener{
         combinationTextfield.setDisabledTextColor(Color.BLACK);
         firsLetterCombination.setEnabled(false);
         firsLetterCombination.setDisabledTextColor(Color.BLACK);
+        singlethread.setFocusPainted(false);
+        multithread.setFocusPainted(false);
 
         runBtn.setFocusPainted(false);
         runBtn.setBackground(Color.white);
         stopBtn.setFocusPainted(false);
         stopBtn.setBackground(Color.white);
+
         stopBtn.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -91,6 +98,9 @@ public class Gui extends JFrame implements ItemListener{
             }
         });
 
+        singlethread.addItemListener(this::setbruteforceOptions);
+        multithread.addItemListener(this::setbruteforceOptions);
+
         guessTextArea.setEnabled(false);
         guessTextArea.setDisabledTextColor(Color.BLACK);
 
@@ -115,6 +125,7 @@ public class Gui extends JFrame implements ItemListener{
         });
 
         lowerAplhabetCheckbox.setSelected(true);
+        multithread.setSelected(true);
 
 
         runBtn.addActionListener(v->{
@@ -135,13 +146,34 @@ public class Gui extends JFrame implements ItemListener{
         });
     }
 
+    /* set singlethread or multithread options */
+    private void setbruteforceOptions(ItemEvent itemEvent) {
+        if(singlethread.isSelected()) {
+            core = 1;
+            firsLetterCombination.setEnabled(true);
+            coreLabel.setText("core "+core);
+        }else{
+            core = Runtime.getRuntime().availableProcessors();
+            firsLetterCombination.setEnabled(false);
+            coreLabel.setText("core "+core);
+        }
+        updateCombination();
+    }
+
     JPanel buildDashboard(){
         JPanel panel = new JPanel(new MigLayout("flowy, gapy 0"));
 
         /* Information System */
         JPanel panel1 = new JPanel(new MigLayout("flowy"));
         panel1.add(osLabel);
-        panel1.add(coreLabel);
+
+        JPanel subpanel1 = new JPanel(new MigLayout());
+        subpanel1.add(coreLabel);
+        subpanel1.add(singlethread);
+        subpanel1.add(multithread);
+        bruteforceOptions.add(singlethread);
+        bruteforceOptions.add(multithread);
+        panel1.add(subpanel1);
 
         /* Checkbox guess */
         JPanel panel2 = new JPanel(new MigLayout());
@@ -183,7 +215,6 @@ public class Gui extends JFrame implements ItemListener{
         return panel;
     }
 
-
     void runBruteforce(){
 
         new Thread(() -> {
@@ -202,8 +233,16 @@ public class Gui extends JFrame implements ItemListener{
 
         String password = passwordTextfield.getText();
 
+        /* update first letter if singlethread selected */
+        if(singlethread.isSelected()){
+            combs = new ArrayList<>();
+            combs.add(firsLetterCombination.getText());
+        }
 
-        Bruteforce bruteforce = new Bruteforce(password, combinationTextfield.getText(), combs);
+
+        Bruteforce bruteforce = new Bruteforce(password, combinationTextfield.getText(), combs, core);
+
+
         Thread thread = new Thread(()-> {
             try {
                 bruteforce.bruteforce();
@@ -239,6 +278,9 @@ public class Gui extends JFrame implements ItemListener{
 
     /* disabled textfield if bruteforce run */
     void setDisabled(Boolean enabled){
+        if(singlethread.isSelected())firsLetterCombination.setEnabled(!enabled);
+
+        otherCombinationTextfield.setEnabled(!enabled);
         lowerAplhabetCheckbox.setEnabled(!enabled);
         upperAplhabetCheckbox.setEnabled(!enabled);
         digitCheckbox.setEnabled(!enabled);
