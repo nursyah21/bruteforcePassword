@@ -5,7 +5,5 @@
 
 this is an example how i create java app with multithread function and use javaswing with miglayout
 
-source: [source-code](bruteforcePassword/src/main/java/com/nursyah/bruteforce_password/Main.java)
-
-output: [bruteforcePassword.jar](bruteforcePassword/out/artifacts/bruteforcePassword_jar/bruteforcePassword.jar)
+download jar: [bruteforcePassword.jar](https://github.com/nursyah21/javaProjects/releases/tag/v0.0.1)
 
