@@ -1,6 +1,5 @@
-# javaProjects
+# bruteforcePassword
 
-### bruteforcepassword
 ![bruteforcePassword](video/bruteforcePassword.gif)
 
 this is an example how i create java app with multithread function and use javaswing with miglayout
